@@ -16,7 +16,7 @@ COLOR_FG_BRIGHT_BLUE="\033[01;94m"
 COLOR_FG_BRIGHT_MAGENTA="\033[01;95m"
 COLOR_FG_BRIGHT_CYAN="\033[01;96m"
 COLOR_FG_BRIGHT_WHITE="\033[01;97m"
-COLOR_FG_DEFAULT="\033[m"
+COLOR_FG_DEFAULT="\033[0m"
 
 append_git_branch() {
     BRANCH=$(git branch --show-current 2>/dev/null)
