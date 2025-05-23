@@ -39,23 +39,47 @@ append_debian_root_git_branch() {
     fi
 }
 
-PS1_STYLE="gentoo-git"
+PS1_STYLE="gentoo"
+PS1_STYLE_ROOT="no"
+PS1_STYLE_GIT="yes"
+
+PS1_STYLE_ROOT=$(echo "${PS1_STYLE_ROOT}" | tr '[:upper:]' '[:lower:]')
+if [ "${PS1_STYLE_ROOT}" == "1" -o "${PS1_STYLE_ROOT}" == "y" -o "${PS1_STYLE_ROOT}" == "yes" ]; then
+    PS1_STYLE_ROOT="yes"
+else
+    PS1_STYLE_ROOT="no"
+fi
+PS1_STYLE_GIT=$(echo "${PS1_STYLE_GIT}" | tr '[:upper:]' '[:lower:]')
+if [ "${PS1_STYLE_GIT}" == "1" -o "${PS1_STYLE_GIT}" == "y" -o "${PS1_STYLE_GIT}" == "yes" ]; then
+    PS1_STYLE_GIT="yes"
+else
+    PS1_STYLE_GIT="no"
+fi
+
 if [ "${PS1_STYLE}" == "gentoo" ]; then
-    export PS1="${COLOR_FG_GREEN}\u@\h${COLOR_FG_BLUE} \w \$${COLOR_FG_DEFAULT} "
-elif [ "${PS1_STYLE}" == "gentoo-root" ]; then
-    export PS1="${COLOR_FG_RED}\h${COLOR_FG_BLUE} \w \$${COLOR_FG_DEFAULT} "
-elif [ "${PS1_STYLE}" == "gentoo-git" ]; then
-    export PS1="${COLOR_FG_GREEN}\u@\h${COLOR_FG_BLUE} \w "'$(append_git_branch)'"\$${COLOR_FG_DEFAULT} "
-elif [ "${PS1_STYLE}" == "gentoo-root-git" ]; then
-    export PS1="${COLOR_FG_RED}\h${COLOR_FG_BLUE} \w "'$(append_git_branch)'"\$${COLOR_FG_DEFAULT} "
+    if [ "${PS1_STYLE_ROOT}" == "no" -a "${PS1_STYLE_GIT}" == "no" ]; then
+        export PS1="${COLOR_FG_GREEN}\u@\h${COLOR_FG_BLUE} \w \$${COLOR_FG_DEFAULT} "
+    elif [ "${PS1_STYLE_ROOT}" == "yes" -a "${PS1_STYLE_GIT}" == "no" ]; then
+        export PS1="${COLOR_FG_RED}\h${COLOR_FG_BLUE} \w \$${COLOR_FG_DEFAULT} "
+    elif [ "${PS1_STYLE_ROOT}" == "no" -a "${PS1_STYLE_GIT}" == "yes" ]; then
+        export -f append_git_branch
+        export PS1="${COLOR_FG_GREEN}\u@\h${COLOR_FG_BLUE} \w "'$(append_git_branch)'"\$${COLOR_FG_DEFAULT} "
+    else
+        export -f append_git_branch
+        export PS1="${COLOR_FG_RED}\h${COLOR_FG_BLUE} \w "'$(append_git_branch)'"\$${COLOR_FG_DEFAULT} "
+    fi
 elif [ "${PS1_STYLE}" == "debian" ]; then
-    export PS1="${COLOR_FG_GREEN}\u@\h${COLOR_FG_DEFAULT}:${COLOR_FG_BLUE}\w${COLOR_FG_DEFAULT}\$ "
-elif [ "${PS1_STYLE}" == "debian-root" ]; then
-    export PS1="\u@\h:\w\$ "
-elif [ "${PS1_STYLE}" == "debian-git" ]; then
-    export PS1="${COLOR_FG_GREEN}\u@\h${COLOR_FG_DEFAULT}:${COLOR_FG_BLUE}\w"'$(append_debian_git_branch)'"${COLOR_FG_DEFAULT}\$ "
-elif [ "${PS1_STYLE}" == "debian-root-git" ]; then
-    export PS1="\u@\h:\w"'$(append_debian_root_git_branch)'"\$ "
+    if [ "${PS1_STYLE_ROOT}" == "no" -a "${PS1_STYLE_GIT}" == "no" ]; then
+        export PS1="${COLOR_FG_GREEN}\u@\h${COLOR_FG_DEFAULT}:${COLOR_FG_BLUE}\w${COLOR_FG_DEFAULT}\$ "
+    elif [ "${PS1_STYLE_ROOT}" == "yes" -a "${PS1_STYLE_GIT}" == "no" ]; then
+        export PS1="\u@\h:\w\$ "
+    elif [ "${PS1_STYLE_ROOT}" == "no" -a "${PS1_STYLE_GIT}" == "yes" ]; then
+        export -f append_debian_git_branch
+        export PS1="${COLOR_FG_GREEN}\u@\h${COLOR_FG_DEFAULT}:${COLOR_FG_BLUE}\w"'$(append_debian_git_branch)'"${COLOR_FG_DEFAULT}\$ "
+    else
+        export -f append_debian_root_git_branch
+        export PS1="\u@\h:\w"'$(append_debian_root_git_branch)'"\$ "
+    fi
 else
     export PS1="\u@\h:\w\$ "
 fi
